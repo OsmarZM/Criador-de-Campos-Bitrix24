@@ -1,200 +1,179 @@
-📘 README – Criador de Campos Personalizados para Bitrix24
-🧩 Descrição do Projeto
+# 📘 Criador de Campos Personalizados para Bitrix24
 
-O Criador de Campos Bitrix24 é uma aplicação desenvolvida para automatizar a criação em massa de campos personalizados (userfields) no CRM do Bitrix24.
-Em vez de criar cada campo manualmente dentro do painel do Bitrix, o sistema envia requisições REST para gerar dezenas ou centenas de campos de forma padronizada, rápida e segura.
+Uma aplicação simples e poderosa para **criar campos personalizados em massa** no CRM do Bitrix24 usando a API REST.  
+Ideal para integrações, automações e implantação rápida de estruturas de dados complexas.
 
-Ele suporta:
+---
 
-Leads
+## 🚀 Funcionalidades
 
-Negócios (Deals)
+- Criar múltiplos campos personalizados de uma só vez
+- Suporte às entidades:
+  - **Leads**
+  - **Negócios (Deals)**
+  - **Contatos**
+  - **Empresas**
+- Tipos de campo suportados:
+  - Texto (`string`)
+  - Número inteiro (`integer`)
+  - Decimal (`double`)
+  - Arquivo (`file`)
+  - Sim/Não (`boolean`)
+  - Lista (`enumeration`)
+- Sanitização automática do nome interno `FIELD_NAME`:
+  - Remove acentos
+  - Substitui espaços por `_`
+  - Permite apenas caracteres válidos (A–Z, 0–9, `_`)
+- Numeração automática dos campos:
+  ```
+  NF (1)
+  NF (2)
+  NF (3)
+  ```
+- Log detalhado exibindo:
+  - URL da requisição
+  - Payload enviado
+  - Status HTTP
+  - Resposta da API
 
-Contatos
+---
 
-Empresas
+## 🧩 Como funciona
 
-E diversos tipos de campos:
+A aplicação lê o **webhook completo** do Bitrix24 e extrai:
 
-Texto
+- **API_URL:**  
+  ```
+  https://empresa.bitrix24.com.br/rest
+  ```
 
-Número
+- **TOKEN:**  
+  ```
+  USER_ID/CHAVE
+  ```
 
-Decimal
+Mapeamento de entidades:
 
-Arquivo
+| Entidade | Código interno | Endpoint usado |
+|----------|----------------|----------------|
+| Leads | `lead` | `crm.lead.userfield.add` |
+| Negócios | `deal` | `crm.deal.userfield.add` |
+| Contatos | `contact` | `crm.contact.userfield.add` |
+| Empresas | `company` | `crm.company.userfield.add` |
 
-Sim/Não
+Formato final da URL:
 
-Lista (com opções personalizadas)
-
-O projeto foi feito para equipes que precisam criar estruturas grandes de forma consistente—como integrações, ETLs, automações e sistemas externos espelhados no Bitrix24.
-
-🚀 Principais Funcionalidades
-
-Criar múltiplos campos personalizados de uma só vez
-
-Nomeação automática com numeração incremental:
-
-NF (1)
-NF (2)
-NF (3)
-
-
-Geração do FIELD_NAME seguindo as exigências do Bitrix24:
-
-Sem acentos
-
-Sem espaços
-
-Apenas A–Z, 0–9 e _
-
-Exemplo:
-
-UF_CRM_DEAL_NF_001
-
-
-Suporte completo a campos do tipo Lista (enumeration)
-
-Log detalhado exibindo:
-
-URL da requisição
-
-Payload enviado
-
-Status HTTP
-
-Resposta completa da API
-
-Separação automática do API_URL e TOKEN a partir do webhook completo do Bitrix24
-
-🏗️ Arquitetura
-
-O projeto é composto por:
-
-MainForm.cs — lógica principal, regras de montagem do payload, sanitização e requisições HTTP
-
-MainForm.Designer.cs — definição da interface gráfica
-
-Program.cs — inicialização da aplicação Windows Forms
-
-.csproj — configuração do projeto e referência ao Newtonsoft.Json
-
-🔧 Requisitos
-
-Windows 10 ou superior
-
-.NET 6
-
-Permissão no Bitrix24 para criar campos personalizados
-
-Webhook do Bitrix24 com permissões completas de CRM
-
-Webhook deve ser no formato:
-
-https://empresa.bitrix24.com.br/rest/USER_ID/TOKEN/
-
-💡 Como Usar
-
-Abra o aplicativo Criador de Campos
-
-Cole o webhook completo do Bitrix24
-
-Informe:
-
-Nome base do campo
-
-Quantidade de campos
-
-Entidade de destino
-
-Tipo de campo
-
-Opções (caso seja Lista)
-
-Clique em Criar Campos
-
-Acompanhe o log detalhado no rodapé
-
-Verifique os novos campos no CRM do Bitrix24
-
-📡 Como Funcionam as Requisições
-
-O Bitrix24 utiliza endpoints diferentes para cada entidade:
-
-Entidade	Endpoint
-Lead	crm.lead.userfield.add
-Deal	crm.deal.userfield.add
-Contact	crm.contact.userfield.add
-Company	crm.company.userfield.add
-
-O sistema constrói automaticamente:
-
+```
 {API_URL}/{TOKEN}/{ENDPOINT}.json
+```
 
+---
 
-Exemplo real:
+## 🔧 Como usar
 
-https://empresa.bitrix24.com.br/rest/163/abc123xyz/crm.deal.userfield.add.json
+1. Abra o aplicativo  
+2. Cole o webhook completo do Bitrix24  
+3. Preencha:
+   - Nome base do campo  
+   - Quantidade  
+   - Entidade de destino  
+   - Tipo do campo  
+   - (Opcional) Opções de lista  
+4. Clique em **Criar campos**  
+5. Veja o log detalhado  
+6. Verifique os novos campos no CRM do Bitrix24  
 
-🧼 Sanitização do FIELD_NAME
+---
 
-Para atender às regras rígidas do Bitrix24, o nome interno é convertido para o formato:
+## 🗃️ Exemplo de `FIELD_NAME` gerado
 
-A-Z somente
+Entrada:
+```
+Nome base: Arquivo NF
+Entidade: Negócios
+```
 
-Espaços viram _
+Saída sanitizada:
+```
+ARQUIVO_NF
+```
 
-Acentos são removidos
+Nome final:
+```
+UF_CRM_DEAL_ARQUIVO_NF_001
+```
 
-Caracteres inválidos são eliminados
+---
+
+## 🧼 Sanitização do nome interno
+
+Processo aplicado:
+
+- Remove acentos  
+- Troca espaços por `_`  
+- Remove caracteres inválidos  
 
 Exemplo:
 
-Entrada: "Arquivo da Fatura"
-Saída:   ARQUIVO_DA_FATURA
+```
+Entrada: "Arquivo Fiscal 2024"
+Saída:   ARQUIVO_FISCAL_2024
+```
 
+---
 
-Nome final gerado:
+## 📡 Estrutura da requisição enviada
 
-UF_CRM_DEAL_ARQUIVO_DA_FATURA_001
+```json
+{
+  "fields": {
+    "FIELD_NAME": "UF_CRM_DEAL_ARQUIVO_NF_001",
+    "EDIT_FORM_LABEL": "Arquivo NF (1)",
+    "LIST_COLUMN_LABEL": "Arquivo NF (1)",
+    "USER_TYPE_ID": "string",
+    "MULTIPLE": "N"
+  }
+}
+```
 
-🗂️ Estrutura de Arquivos
+---
+
+## 🏗️ Estrutura do Projeto
+
+```
 /CriadorDeCampos
  ├── BitrixFieldCreator.csproj
  ├── Program.cs
  ├── MainForm.cs
  └── MainForm.Designer.cs
+```
 
-🛠️ Construindo o Executável
+---
 
-O projeto pode ser publicado como:
+## 🛠️ Como gerar o executável (standalone)
 
-✔ Standalone (não precisa instalar .NET no PC do usuário)
-✔ Single File (um único .exe)
+Execute:
 
-Comando CLI recomendado:
-
+```bash
 dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+```
 
+Executável final:
 
-O executável final ficará em:
-
+```
 publish/CriadorDeCampos.exe
+```
 
+---
 
-Esse EXE funciona em qualquer computador Windows, mesmo sem .NET instalado.
+## ⚠️ Limitações
 
-🛡️ Limitações
+- Não edita ou remove campos existentes  
+- Não altera layout do CRM  
+- Requer webhook com permissão completa em CRM  
 
-Apenas cria campos (não lista, edita ou remove)
+---
 
-Depende do Bitrix24 aceitar o webhook enviado
+## 📄 Licença
 
-Usuários sem permissão de CRM não conseguem criar campos
-
-Campos criados não podem ser automaticamente reorganizados no layout do Bitrix24
-
-📄 Licença
-
-Livre para uso interno de equipes e consultores que trabalham com integrações Bitrix24.
+Uso livre para equipes e consultorias integradas ao Bitrix24.
