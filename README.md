@@ -3,6 +3,8 @@
 Uma aplicação simples e poderosa para **criar campos personalizados em massa** no CRM do Bitrix24 usando a API REST.  
 Ideal para integrações, automações e implantação rápida de estruturas de dados complexas.
 
+Teste Real: https://v0-bitrix24-fields-generator.vercel.app/
+
 ---
 
 ## 🚀 Funcionalidades
